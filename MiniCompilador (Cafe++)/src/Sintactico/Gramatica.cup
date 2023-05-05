@@ -1,0 +1,82 @@
+package Sintactico;
+import java_cup.runtime.*;
+import Lexico.Pintar;
+
+
+/* Declaraciones de Tokens */
+terminal Super_Inicio, Super_Fin, Situacion, Operdor, Desicion, Puntuacion, Cifra, ERROR;
+
+/* Reglas de Producción */
+start with INICIO;
+
+INICIO ::= Super_Inicio PROGRAMA Super_Fin;
+
+PROGRAMA ::= SENTENCIAS;
+
+SENTENCIAS ::= SENTENCIA
+            | SENTENCIAS SENTENCIA;
+
+SENTENCIA ::= ASIGNACION Puntuacion
+            | LEER_DATO Puntuacion
+            | IMPRIMIR_DATO Puntuacion
+            | CONDICIONALES
+            | C_MIENTRAS
+            | C_REPETIR;
+
+ASIGNACION ::= VARIABLE_DA OPERADOR_ASIGNACION EXPRESION;
+
+EXPRESION ::= EXPRESION_ARITMETICA
+            | EXPRESION_LOGICA;
+
+EXPRESION_ARITMETICA ::= Cifra
+                       | VARIABLE_DA
+                       | EXPRESION_ARITMETICA OPERADOR_ARITMETICO EXPRESION_ARITMETICA;
+
+OPERADOR_ARITMETICO ::= "+" | "-" | "*" | "/";
+
+EXPRESION_LOGICA ::= DESIGUALDAD
+                   | CONJUNCION
+                   | DISYUNCION;
+
+DESIGUALDAD ::= EXPRESION_ARITMETICA OPERADOR_COMPARACION EXPRESION_ARITMETICA;
+
+OPERADOR_COMPARACION ::= "==" | "!=" | "<" | ">" | "<=" | ">=";
+
+CONJUNCION ::= EXPRESION_LOGICA "&&" EXPRESION_LOGICA;
+
+DISYUNCION ::= EXPRESION_LOGICA "||" EXPRESION_LOGICA;
+
+LEER_DATO ::= "Leer" VARIABLE_DA;
+
+IMPRIMIR_DATO ::= "Imprimir" EXPRESION;
+
+CONDICIONALES ::= Desicion Puntuacion SENTENCIAS FIN_DESICION;
+
+FIN_DESICION ::= Super_Fin
+               | Desicion Puntuacion SENTENCIAS FIN_DESICION;
+
+C_MIENTRAS ::= Situacion Puntuacion EXPRESION_LOGICA Puntuacion SENTENCIAS Super_Fin;
+
+C_REPETIR ::= Operdor Puntuacion SENTENCIAS Situacion Puntuacion EXPRESION_LOGICA Puntuacion Super_Fin;
+
+/* Precedencia y Asociatividad */
+precedence left CONJUNCION, DISYUNCION;
+precedence left OPERADOR_COMPARACION;
+precedence left OPERADOR_ARITMETICO;
+
+/* Error Handling */
+nonterminal SENTENCIA_ERRONEA;
+
+error ::= SENTENCIA_ERRONEA Puntuacion
+         | SENTENCIA Puntuacion ERROR;
+
+SENTENCIA_ERRONEA ::= Puntuacion
+                    | LEER_DATO
+                    | IMPRIMIR_DATO
+                    | CONDICIONALES
+                    | C_MIENTRAS
+                    | C_REPETIR;
+
+/* Ignorar Tokens */
+terminal SEMICOLON, NEWLINE, WHITESPACE;
+ignore SEMICOLON, NEWLINE, WHITESPACE;
