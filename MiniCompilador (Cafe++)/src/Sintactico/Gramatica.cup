@@ -1,7 +1,18 @@
 package Sintactico;
 import java_cup.runtime.*;
 import Lexico.Pintar;
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
 
+    public Symbol getS(){
+        return this.s;
+}
+:};
 
 /* Declaraciones de Tokens */
 terminal Super_Inicio, Super_Fin, Situacion, Operdor, Desicion, Puntuacion, Cifra, ERROR;
